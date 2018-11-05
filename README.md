@@ -15,6 +15,7 @@ Perl Module for interacting with the Cisco Firepower Management Center API.
 - Improved error handling (use croak?).
 - Better error checking.
 - Add missing features.
+- Broader testing (only tested against v6.2.3.3).
 
 ## Example
 Included is an example that uses the FMC Perl module. It connects to the FMC and gets a Network Group called TestGroup. This returns all the current values of TestGroup. The script then resolves an FQDN using two different DNS servers and then updates, by merging the new and existing values, the TestGroup Network Group.
