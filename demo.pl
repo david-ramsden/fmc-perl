@@ -5,7 +5,6 @@ use warnings;
 
 use FMC;
 use Net::DNS::Resolver;
-use Data::Dumper;
 
 my $fmc = FMC->new();
 # Connect to the FMC.
@@ -18,18 +17,21 @@ $fmc->connect(url         => 'https://172.29.0.43',
 my $group = $fmc->get_networkgroup("TestGroup");
 
 # Show values before any changes.
-print "\n\n*** Network group before:\n";
-foreach my $value (@{$group->{values}}) {
-	print "$value->{value} [$value->{type}]\n";
+print "\n*** Network group before:\n";
+foreach my $value (@{$group->{values}})
+{
+	print "\t$value->{value} [$value->{type}]\n";
 }
-print "\n\n";
+print "\n";
 
 # Resolve FQDN using the two DNS servers specified.
+# DNS servers could get different replies because of GeoDNS.
 my %ips = get_ips_from_fqdn("dev-prod05.conferdeploy.net", ('192.168.228.27','172.16.68.53'));
 #my %ips = get_ips_from_fqdn("one.one.one.one", ('192.168.228.27','172.16.68.53'));
 
 my @new = ();
-foreach my $ip (keys %ips) {
+foreach my $ip (keys %ips)
+{
 	push @new, {type => 'Host', value => $ips{$ip}};
 }
 
@@ -41,27 +43,34 @@ $fmc->update_networkgroup($group->{id}, \@new, 1);
 $group = $fmc->get_networkgroup($group->{id});
 
 # Show the new values of the network group.
-print "\n\n*** Network group after:\n";
-foreach my $value (@{$group->{values}}) {
-	print "$value->{value} [$value->{type}]\n";
+print "\n*** Network group after:\n";
+foreach my $value (@{$group->{values}})
+{
+	print "\t$value->{value} [$value->{type}]\n";
 }
-print "\n\n";
+print "\n";
 
 
 
-sub get_ips_from_fqdn {
+# Parse in an FQDN and n number of DNS servers.
+# Returns unified list of A records for FQDN from the DNS servers.
+sub get_ips_from_fqdn
+{
         my $fqdn       = shift;
         my @dnsservers = @_;
 
         my $resolver = Net::DNS::Resolver->new(udp_timeout => 3);
         my %ips;
 
-        foreach my $dnsserver (@dnsservers) {
+        foreach my $dnsserver (@dnsservers)
+	{
                 $resolver->nameservers($dnsserver);
                 my $packet = $resolver->query($fqdn, 'A');
 
-                if (defined($packet)) {
-                        foreach my $ip (map { $_->address } grep { $_->type eq 'A' } $packet->answer) {
+                if (defined($packet))
+		{
+                        foreach my $ip (map { $_->address } grep { $_->type eq 'A' } $packet->answer)
+			{
                                 $ips{$ip} = $ip;
                         }
                 }
