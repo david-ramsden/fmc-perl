@@ -7,7 +7,7 @@ Perl Module for interacting with the Cisco Firepower Management Center API.
 - Update a Network Group's values and optionally merge new values with existing values instead of overwriting existing values.
 
 ## Missing Features
-- Only currently supports Network Groups.
+- Currently only supports Network Groups.
 - Does not yet support deploying changes to devices.
 
 ## To Do
